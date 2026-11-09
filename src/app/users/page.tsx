@@ -1,22 +1,32 @@
-import React, { Suspense } from 'react';
-import Users from '../components/Users';
+import React, { use } from 'react';
 
+type User = {
+    id: number;
+    name: string;
+    email: string;
+};
 
-const usersPromise = async() => {
-    const data = await fetch('http://localhost:5000/users');
-    return data.json();
-}
+type UsersProps = {
+    usersPromise: Promise<User[]>;
+};
 
-const UsersPage =async () => {
-    
+const Users = ({ usersPromise }: UsersProps) => {
+
+    const users = use(usersPromise);
+
     return (
         <div>
-            <h1>users data coming soon : </h1>
-            <Suspense fallback = {<h2>Loading...</h2>}>
-            <Users usersPromise ={usersPromise} ></Users>
-            </Suspense>
+            <h1>Users in the component: {users.length}</h1>
+
+            {
+                users.map(user => (
+                    <li key={user.id}>
+                        {user.name}: {user.email}
+                    </li>
+                ))
+            }
         </div>
     );
 };
 
-export default UsersPage;
+export default Users;
